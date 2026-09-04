@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ghouri Iqbal Khan — Senior DevOps Engineer &amp; Cloud FinOps</title>
+<meta name="description" content="Senior DevOps Engineer specializing in Cloud FinOps, multi-cloud infrastructure, and data engineering." />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap hero-inner">
+      <nav class="nav">
+        <span class="brand">Ghouri Iqbal Khan</span>
+        <div class="nav-links">
+          <a href="#work">Work</a>
+          <a href="#skills">Skills</a>
+          <a href="#experience">Experience</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+
+      <div class="hero-content">
+        <p class="eyebrow">Senior DevOps Engineer · Cloud FinOps &amp; Automation</p>
+        <h1>Building the platforms that make multi-cloud spend visible, governed, and self-service.</h1>
+        <p class="hero-sub">
+          4+ years engineering and operating AWS &amp; Azure infrastructure, with a growing specialization in Cloud
+          FinOps — cost governance, self-service provisioning, and the data engineering that feeds it.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#work">See the work</a>
+          <a class="btn btn-outline" href="mailto:pathaniqbalkhan54321@gmail.com">Get in touch</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <section id="work" class="section">
+      <div class="wrap">
+        <p class="section-eyebrow">Case Studies</p>
+        <h2 class="section-title">Selected work</h2>
+        <p class="section-lede">
+          Architecture-level write-ups of systems I've designed and built. Details are generalized — no proprietary
+          code, credentials, or company-internal data.
+        </p>
+
+        <div class="case-list">
+
+          <article class="case">
+            <div class="case-tags">
+              <span class="tag tag-finops">FinOps</span>
+              <span class="tag">Platform Engineering</span>
+              <span class="tag">RBAC</span>
+            </div>
+            <h3>FinOps Platform — Cost, Inventory &amp; Self-Service Provisioning</h3>
+            <p class="case-problem">
+              <strong>The problem:</strong> multi-cloud spend across AWS, Azure, and GCP had no single source of
+              truth, and infra requests had no consistent path from "someone needs a server" to "it's approved,
+              costed, and provisioned" — every step was manual and undocumented.
+            </p>
+            <p class="case-body">
+              I owned the requirements and architecture for three connected surfaces: a <strong>FinOps</strong> tile
+              (multi-cloud cost dashboards, budget &amp; anomaly tracking, savings recommendations, and an AI
+              assistant for natural-language cost queries), an <strong>Inventory</strong> tile (a live, drill-down
+              view across 25+ resource categories on AWS and Azure, GCP scoped as a planned extension), and a
+              <strong>Provisioning Infra</strong> tile — a self-service request workflow that auto-generates
+              Terraform from an approved request and gates creation behind cost approval and RBAC before anything
+              touches AWS.
+            </p>
+            <p class="case-body">
+              Underneath, I shaped the data layer to match each workload's actual access pattern — ClickHouse for
+              high-volume billing/cost analytics, PostgreSQL for transactional app and audit state, Redis/Valkey for
+              session and cache workloads — and specified real-time AWS Pricing API integration so cost sheets never
+              rely on stale, cached figures. Every module carries a full RBAC/permission model and audit trail.
+            </p>
+            <p class="case-outcome">
+              <strong>Outcome:</strong> one platform giving finance and engineering the same real-time view of spend,
+              with every infrastructure change traceable and cost-gated before it happens — not after.
+            </p>
+            <p class="case-meta">Built via an AI-assisted, agentic development workflow — directed end-to-end with
+              personal review of every change before it shipped.</p>
+          </article>
+
+          <article class="case">
+            <div class="case-tags">
+              <span class="tag tag-data">Data Engineering</span>
+              <span class="tag">ClickHouse</span>
+              <span class="tag">Multi-Cloud</span>
+            </div>
+            <h3>Multi-Cloud Billing Pipeline → ClickHouse</h3>
+            <p class="case-problem">
+              <strong>The problem:</strong> raw billing exports from AWS (CUR), Azure (FOCUS), and GCP arrive in
+              different formats, on different schedules, with different quirks — Azure re-exports a full restatement
+              of the month daily, AWS never includes a real FX rate, and tags/account names drift over time. Loading
+              any of this naively risks double-counting or silently stale figures.
+            </p>
+            <p class="case-body">
+              I engineered the pipeline that normalizes all three sources into one unified ClickHouse warehouse table
+              — the single source every cost dashboard, budget check, and AI query reads from. Loading is
+              checksum/manifest-based and incremental, so a re-run only ever processes new or changed files, which is
+              what makes it safe to automate unattended.
+            </p>
+            <p class="case-body">
+              The harder problem was data quality after the fact: FX-rate normalization for accounts with no native
+              exchange rate, and reconciliation when a tag or account gets renamed. Both are corrected <em>in
+              place</em> against already-loaded historical data — never a full re-ingest. The whole cycle runs on a
+              cron-scheduled, lock-protected pipeline, with materialized views auto-refreshing summary tables as new
+              rows land, and ClickHouse itself tuned (memory caps, swap, batched month-by-month mutations) so a large
+              reconciliation run never takes the server down.
+            </p>
+            <p class="case-outcome">
+              <strong>Outcome:</strong> a pipeline that runs unattended overnight, self-corrects data-quality issues
+              without manual intervention, and has never required a full historical reload to fix a mistake.
+            </p>
+            <p class="case-meta">Built via the same AI-directed workflow as the platform above, under my own review
+              at every step.</p>
+          </article>
+
+          <article class="case case-placeholder">
+            <div class="case-tags">
+              <span class="tag">Coming soon</span>
+            </div>
+            <h3>More case studies in progress</h3>
+            <p class="case-body">
+              Next up: how this site itself is hosted — Terraform-provisioned AWS infrastructure (S3 + CloudFront +
+              Route53), deployed through a CI pipeline, as a live example rather than just a description of one.
+            </p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="section section-alt">
+      <div class="wrap">
+        <p class="section-eyebrow">Skills</p>
+        <h2 class="section-title">What I work with</h2>
+
+        <div class="skill-grid">
+          <div class="skill-card">
+            <h4>Cloud Platforms</h4>
+            <p>AWS (EC2, VPC, S3, IAM, KMS, RDS, ECS/EKS, Lambda, CloudFormation, CloudWatch, QuickSight) · Azure
+              (VMs, VNet, NSG, Key Vault, Entra ID, Azure OpenAI) · GCP (Compute Engine, Persistent Disks, Cloud Load
+              Balancing)</p>
+          </div>
+          <div class="skill-card">
+            <h4>Cloud FinOps</h4>
+            <p>Cost governance &amp; showback, live pricing-API integration, budget/anomaly tracking, savings
+              recommendations, chargeback design</p>
+          </div>
+          <div class="skill-card">
+            <h4>Data Engineering &amp; Databases</h4>
+            <p>PostgreSQL, ClickHouse, Redis/Valkey, MySQL — administration, performance tuning, backup/HA, multi-cloud
+              billing pipelines</p>
+          </div>
+          <div class="skill-card">
+            <h4>IaC &amp; Automation</h4>
+            <p>Terraform (modules, remote state, workspaces), Ansible (playbooks, roles), GitLab CI/CD</p>
+          </div>
+          <div class="skill-card">
+            <h4>Orchestration</h4>
+            <p>Docker, Kubernetes (Deployments, HPA/VPA, Helm, rolling upgrades), EFK (Fluentd log pipelines)</p>
+          </div>
+          <div class="skill-card">
+            <h4>Monitoring &amp; Security</h4>
+            <p>Prometheus, Grafana, Nagios, Zabbix, ELK · IAM/SCP/KMS, Sectona PAM, SentinelOne EDR</p>
+          </div>
+          <div class="skill-card">
+            <h4>Compliance &amp; Audit</h4>
+            <p>ISO 27001 &amp; RCSA control frameworks — control mapping, evidence collection, audit remediation</p>
+          </div>
+          <div class="skill-card">
+            <h4>AI-Assisted Engineering</h4>
+            <p>Directing LLM coding agents (Claude) to architect, build &amp; ship production systems end-to-end,
+              under continuous review</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" class="section">
+      <div class="wrap">
+        <p class="section-eyebrow">Experience</p>
+        <h2 class="section-title">Where I've built this</h2>
+
+        <div class="exp-row">
+          <div class="exp-when">Sep 2022 — Present</div>
+          <div class="exp-what">
+            <h3>Senior DevOps Engineer</h3>
+            <p class="exp-org">Perfios Software Solutions Pvt Ltd</p>
+            <p>
+              Engineering and operating AWS &amp; Azure infrastructure across Dev/Staging/Production with
+              Terraform-driven IaC, GitLab CI/CD, Kubernetes, and the Cloud FinOps platform and data pipeline
+              described above. Full detail on the <a href="#contact">resume</a> — happy to walk through any of it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section section-cta">
+      <div class="wrap contact-wrap">
+        <h2>Let's talk</h2>
+        <p>Open to Senior DevOps / Cloud FinOps / Platform Engineering roles.</p>
+        <div class="contact-links">
+          <a class="btn btn-primary" href="mailto:pathaniqbalkhan54321@gmail.com">pathaniqbalkhan54321@gmail.com</a>
+          <a class="btn btn-outline" href="https://www.linkedin.com/in/YOUR-LINKEDIN-HANDLE" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn btn-outline" href="https://github.com/YOUR-GITHUB-USERNAME" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>&copy; <span id="year"></span> Ghouri Iqbal Khan · Built and hosted with GitHub Pages</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
