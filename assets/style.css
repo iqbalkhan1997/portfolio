@@ -234,3 +234,15 @@ body {
   .exp-row { flex-direction: column; gap: 8px; }
   .case { padding: 22px; }
 }
+
+/* Narrow phones: the nav's brand + 4 links no longer fit one line, so stack
+   them instead of letting both wrap independently (which reads as two
+   ragged, uneven lines). */
+@media (max-width: 480px) {
+  .nav { flex-direction: column; align-items: flex-start; gap: 10px; padding: 20px 0; }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .nav-links a { margin-left: 0; }
+  .hero-inner { padding-bottom: 64px; }
+  .hero h1 { font-size: 26px; }
+  .hero-sub { font-size: 14px; }
+}
