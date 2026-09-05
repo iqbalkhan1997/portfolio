@@ -46,6 +46,7 @@ Buy a domain (Namecheap/Cloudflare, ~$10–12/yr), then:
 ## Local preview
 
 Just open `index.html` directly in a browser — no server or build step needed. To preview with a local server instead (optional):
+Not Needed
 ```bash
 python3 -m http.server 8000
 ```
