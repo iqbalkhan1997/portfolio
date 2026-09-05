@@ -1,16 +1,30 @@
 :root {
-  --navy: #0b2036;
-  --navy-2: #12335a;
-  --accent: #0ea5b7;
-  --accent-2: #2563eb;
-  --ink: #1c2530;
-  --ink-soft: #4b5768;
-  --muted: #7c8798;
-  --paper: #f6f4ef;
-  --card: #ffffff;
-  --hair: #e4e1d8;
-  --alt-bg: #eef2f4;
-  --radius: 10px;
+  /* Dark theme, matched to the actual product's design tokens
+     (--background/--foreground/--card/--primary/--accent/--border in
+     that app's globals.css), not a generic dark-mode guess. */
+  --bg: #0a0f1e;
+  --fg: #eef2f6;
+  --fg-soft: #c3ccdb;
+  --muted: #8b96ab;
+  --card: #0f1930;
+  --card-solid: #101a33;
+  --border: #212e4a;
+  --primary: #2068f3;
+  --accent: #167a9c;
+  --radius: 14px;
+
+  /* Per-module accent palette -- the exact hues the real product uses for
+     its FinOps/Inventory/Provisioning tiles and cloud-provider icons. */
+  --c-finops: #067cff;
+  --c-inventory: #a855f7;
+  --c-provisioning: #f59e0b;
+  --c-aws: #ff9900;
+  --c-azure: #0078d4;
+  --c-gcp: #4285f4;
+  --c-green: #00bc82;
+  --c-violet: #9085e9;
+  --c-gold: #d4a94a;
+  --c-red: #ea4335;
 }
 
 * { box-sizing: border-box; }
@@ -19,36 +33,58 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--bg);
+  color: var(--fg);
   font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.6;
+  position: relative;
 }
 
 .wrap {
   max-width: 1040px;
   margin: 0 auto;
   padding: 0 24px;
+  position: relative;
+  z-index: 1;
 }
 
-/* ---------- Hero ---------- */
-.hero {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 55%, var(--accent) 140%);
-  color: #fff;
-  position: relative;
+/* ---------- Fixed colorful backdrop, shared by the whole page ----------
+   Static (no CSS animation) -- deliberately, same reasoning as the real
+   product: continuously animating a full-bleed gradient keeps the GPU
+   compositor busy for as long as the tab is open, which is wasted work for
+   a background that's purely decorative. A grid pattern plus several large,
+   soft, motionless color orbs gives the same "alive" feel at zero ongoing
+   cost. */
+.bg-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
   overflow: hidden;
+  pointer-events: none;
+  background: var(--bg);
 }
-.hero::after {
+.bg-fx::before {
   content: "";
   position: absolute;
-  right: -120px;
-  top: -140px;
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(14,165,183,0.35), transparent 70%);
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, black, transparent 75%);
 }
-.hero-inner { position: relative; z-index: 1; padding-bottom: 96px; }
+.orb { position: absolute; border-radius: 50%; filter: none; }
+.orb-1 { left: -10rem; top: -8%;  width: 36rem; height: 36rem; background: radial-gradient(circle, #067cff33, transparent 70%); }
+.orb-2 { right: -8%;   top: 4%;   width: 32rem; height: 32rem; background: radial-gradient(circle, #00bc8230, transparent 70%); }
+.orb-3 { left: 26%;    bottom: -18%; width: 30rem; height: 30rem; background: radial-gradient(circle, #0050a938, transparent 70%); }
+.orb-4 { right: -9rem; bottom: -8%; width: 28rem; height: 28rem; background: radial-gradient(circle, #9085e929, transparent 70%); }
+.orb-5 { left: 6%;     top: 28%;  width: 24rem; height: 24rem; background: radial-gradient(circle, #d4a94a24, transparent 70%); }
+.orb-6 { right: 22%;   top: 44%;  width: 22rem; height: 22rem; background: radial-gradient(circle, #a855f728, transparent 70%); }
+
+/* ---------- Hero ---------- */
+.hero { position: relative; z-index: 1; }
+.hero-inner { padding-bottom: 96px; }
 
 .nav {
   display: flex;
@@ -56,15 +92,15 @@ body {
   align-items: center;
   padding: 28px 0;
 }
-.brand { font-weight: 700; font-size: 17px; }
+.brand { font-weight: 700; font-size: 17px; color: var(--fg); }
 .nav-links a {
-  color: #cfe3ec;
+  color: var(--fg-soft);
   text-decoration: none;
   margin-left: 28px;
   font-size: 14px;
   font-weight: 500;
 }
-.nav-links a:hover { color: #fff; }
+.nav-links a:hover { color: var(--fg); }
 
 .hero-content { max-width: 680px; margin-top: 48px; }
 .eyebrow {
@@ -80,10 +116,11 @@ body {
   line-height: 1.25;
   margin: 0 0 20px 0;
   font-weight: 800;
+  color: var(--fg);
 }
 .hero-sub {
   font-size: 16px;
-  color: #d7e3ea;
+  color: var(--fg-soft);
   margin: 0 0 32px 0;
   max-width: 560px;
 }
@@ -99,80 +136,122 @@ body {
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
 .btn:hover { transform: translateY(-1px); }
-.btn-primary { background: var(--accent); color: #06232a; }
-.btn-outline { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.5); }
+.btn-primary { background: linear-gradient(135deg, #0050a9 0%, #067cff 45%, #00bc82 100%); color: #ffffff; }
+.btn-outline { background: rgba(255,255,255,0.03); color: var(--fg); border: 1.5px solid rgba(255,255,255,0.18); }
 
 /* ---------- Sections ---------- */
-.section { padding: 72px 0; }
-.section-alt { background: var(--alt-bg); }
+.section { padding: 72px 0; position: relative; z-index: 1; }
 .section-eyebrow {
   text-transform: uppercase;
   letter-spacing: 1.4px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--accent);
+  color: #7fd9e6;
   margin: 0 0 10px 0;
 }
 .section-title {
   font-size: 28px;
   font-weight: 800;
-  color: var(--navy);
+  color: var(--fg);
   margin: 0 0 14px 0;
 }
 .section-lede {
-  color: var(--ink-soft);
+  color: var(--fg-soft);
   max-width: 640px;
   margin: 0 0 40px 0;
 }
 
+/* ---------- Glass-panel base (matches the app's .glass-panel: translucent
+   dark card, subtle white-8% border, large soft shadow, no blur) ----------
+   Applied directly to .case and .skill-card rather than via an extra class,
+   so every card gets it automatically. */
+.case, .skill-card {
+  background: rgba(15, 25, 48, 0.85);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 0 0 rgba(255,255,255,0.05) inset, 0 20px 50px -20px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.case::before, .skill-card::before {
+  content: "";
+  position: absolute;
+  right: -3rem;
+  top: -3rem;
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--card-accent, var(--primary)) 0%, transparent 70%);
+  opacity: 0.22;
+  pointer-events: none;
+}
+.case:hover, .skill-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--card-accent, var(--primary)) 50%, rgba(255,255,255,0.08));
+}
+
+/* Per-card accent hues -- same palette the real product assigns per module
+   (FinOps blue, Inventory purple, Provisioning amber, cloud-provider
+   colors) so each card gets its own identity instead of one repeated tint. */
+.accent-finops       { --card-accent: var(--c-finops); }
+.accent-inventory    { --card-accent: var(--c-inventory); }
+.accent-provisioning { --card-accent: var(--c-provisioning); }
+.accent-aws          { --card-accent: var(--c-aws); }
+.accent-azure        { --card-accent: var(--c-azure); }
+.accent-gcp          { --card-accent: var(--c-gcp); }
+.accent-green        { --card-accent: var(--c-green); }
+.accent-violet       { --card-accent: var(--c-violet); }
+.accent-gold         { --card-accent: var(--c-gold); }
+.accent-red          { --card-accent: var(--c-red); }
+.accent-purple       { --card-accent: var(--c-inventory); }
+.accent-amber        { --card-accent: var(--c-provisioning); }
+
 /* ---------- Case studies ---------- */
 .case-list { display: flex; flex-direction: column; gap: 24px; }
 .case {
-  background: var(--card);
-  border: 1px solid var(--hair);
-  border-left: 4px solid var(--accent);
-  border-radius: var(--radius);
   padding: 32px;
 }
 .case h3 {
   font-size: 20px;
-  color: var(--navy);
+  color: var(--fg);
   margin: 0 0 14px 0;
 }
-.case-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.case-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; position: relative; z-index: 1; }
 .tag {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  color: var(--navy-2);
-  background: var(--alt-bg);
-  border: 1px solid var(--hair);
+  color: var(--fg-soft);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 999px;
   padding: 4px 10px;
 }
-.tag-finops { color: #0b6b57; background: #e5f5f0; border-color: #cdeee3; }
-.tag-data { color: #7a4b0e; background: #fbf0dd; border-color: #f3ddb0; }
+.tag-finops { color: #7fc4ff; background: rgba(6,124,255,0.14); border-color: rgba(6,124,255,0.3); }
+.tag-data { color: #6fe3bd; background: rgba(0,188,130,0.14); border-color: rgba(0,188,130,0.3); }
 
 .case-body, .case-problem, .case-outcome {
-  color: var(--ink-soft);
+  color: var(--fg-soft);
   margin: 0 0 14px 0;
   font-size: 15px;
+  position: relative;
+  z-index: 1;
 }
 .case-body:last-of-type { margin-bottom: 14px; }
-.case-problem strong, .case-outcome strong { color: var(--ink); }
+.case-problem strong, .case-outcome strong { color: var(--fg); }
 .case-meta {
   font-size: 13px;
   color: var(--muted);
   margin: 0;
   padding-top: 10px;
-  border-top: 1px dashed var(--hair);
+  border-top: 1px dashed rgba(255,255,255,0.1);
+  position: relative;
+  z-index: 1;
 }
-.case-placeholder {
-  border-left-color: var(--hair);
-  background: transparent;
-  border-style: dashed;
-}
+.case-placeholder { border-style: dashed; background: rgba(15,25,48,0.4); }
+.case-placeholder::before { display: none; }
 .case-placeholder h3 { color: var(--muted); }
 
 /* ---------- Skills ---------- */
@@ -181,22 +260,30 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 18px;
 }
-.skill-card {
-  background: var(--card);
-  border: 1px solid var(--hair);
-  border-radius: var(--radius);
-  padding: 20px;
-}
+.skill-card { padding: 20px; }
 .skill-card h4 {
   margin: 0 0 8px 0;
   font-size: 14px;
-  color: var(--navy);
+  color: var(--fg);
+  position: relative;
+  z-index: 1;
+}
+.skill-card h4::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--card-accent, var(--primary));
+  margin-right: 8px;
 }
 .skill-card p {
   margin: 0;
   font-size: 13.5px;
-  color: var(--ink-soft);
+  color: var(--fg-soft);
   line-height: 1.55;
+  position: relative;
+  z-index: 1;
 }
 
 /* ---------- Experience ---------- */
@@ -208,23 +295,23 @@ body {
   font-size: 14px;
   padding-top: 4px;
 }
-.exp-what h3 { margin: 0 0 4px 0; color: var(--navy); font-size: 18px; }
-.exp-org { color: var(--accent-2); font-weight: 600; margin: 0 0 10px 0; font-size: 14px; }
-.exp-what p { color: var(--ink-soft); max-width: 640px; }
-.exp-what a { color: var(--accent-2); }
+.exp-what h3 { margin: 0 0 4px 0; color: var(--fg); font-size: 18px; }
+.exp-org { color: #7fc4ff; font-weight: 600; margin: 0 0 10px 0; font-size: 14px; }
+.exp-what p { color: var(--fg-soft); max-width: 720px; }
+.exp-what a { color: #7fc4ff; }
+.exp-what ul { margin: 0 0 14px 0; padding-left: 20px; max-width: 720px; }
+.exp-what li { color: var(--fg-soft); font-size: 14.5px; line-height: 1.6; margin-bottom: 8px; }
+.exp-what li:last-child { margin-bottom: 0; }
+.exp-more { font-size: 13.5px; color: var(--muted); }
 
 /* ---------- Contact / CTA ---------- */
-.section-cta {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
-  color: #fff;
-  text-align: center;
-}
-.contact-wrap h2 { font-size: 30px; margin: 0 0 12px 0; }
-.contact-wrap > p { color: #d7e3ea; margin: 0 0 32px 0; }
+.section-cta { text-align: center; }
+.contact-wrap h2 { font-size: 30px; margin: 0 0 12px 0; color: var(--fg); }
+.contact-wrap > p { color: var(--fg-soft); margin: 0 0 32px 0; }
 .contact-links { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
 /* ---------- Footer ---------- */
-.footer { padding: 28px 0; }
+.footer { position: relative; z-index: 1; padding: 28px 0; }
 .footer p { margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
 
 /* ---------- Responsive ---------- */
@@ -235,9 +322,6 @@ body {
   .case { padding: 22px; }
 }
 
-/* Narrow phones: the nav's brand + 4 links no longer fit one line, so stack
-   them instead of letting both wrap independently (which reads as two
-   ragged, uneven lines). */
 @media (max-width: 480px) {
   .nav { flex-direction: column; align-items: flex-start; gap: 10px; padding: 20px 0; }
   .nav-links { display: flex; flex-wrap: wrap; gap: 4px 14px; }
